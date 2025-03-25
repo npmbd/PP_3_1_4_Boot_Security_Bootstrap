@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<form action="#" th:action="@{/registration}" th:object="${registrationDto}" method="post">
+    <label for="username"> Username </label>
+    <input id="username" th:field="*{username}" autofocus="autofocus" required/>
+    <br><br>
+    <label for="firstName"> First Name </label>
+    <input id="firstName" th:field="*{firstName}" autofocus="autofocus"/>
+    <br><br>
+    <label for="lastName"> Last Name </label>
+    <input id="lastName" th:field="*{lastName}" autofocus="autofocus"/>
+    <br><br>
+    <label for="email"> Email </label>
+    <input id="email" type="email" th:field="*{email}" autofocus="autofocus"/>
+    <br><br>
+    <label for="tel"> Phone Number </label>
+    <input id="tel" type="tel" th:field="*{phoneNumber}" autofocus="autofocus"/>
+    <br><br>
+    <label for="password"> Password </label>
+    <input id="password" type="password" th:field="*{password}" autofocus="autofocus" required/>
+    <br><br>
+    <label>Roles:</label><br>
+
+    <input type="checkbox" id="role_user" name="roles" th:field="*{roles}" value="ROLE_USER">
+    <label for="role_user">User</label><br>
+
+    <input type="checkbox" id="role_admin" name="roles" th:field="*{roles}" value="ROLE_ADMIN">
+    <label for="role_admin">Admin</label><br>
+
+    <button type="submit">Register</button>
+</form>
+</body>
+</html>
