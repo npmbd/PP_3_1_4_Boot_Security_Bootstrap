@@ -8,14 +8,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dto.Mapper;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,41 +24,67 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
+    private final Mapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleService roleService, Mapper mapper) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
+        this.mapper = mapper;
+    }
+
+    @Override
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     @Transactional
     @Override
     public void saveOrUpdate(UserDto userDto) {
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());
-        user.setEmail(userDto.getEmail());
-        user.setPhoneNumber(userDto.getPhoneNumber());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        Set<String> rolesList = userDto.getRoles();
-        Set<Role> roles = new HashSet<>();
-        for (String roleName : rolesList) {
-            Role role = roleRepository.findByName(roleName)
-                    .orElseGet(() -> {
-                        Role newRole = new Role();
-                        newRole.setName(roleName);
-                        return roleRepository.save(newRole);
-                    });
-            roles.add(role);
+
+        User existingUser = userRepository.findById(userDto.getId()).orElse(null);
+
+        if (existingUser == null) {
+            User user = mapper.toUser(userDto);
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            user.setRoles(roleService.getRolesFromUserDto(userDto));
+            userRepository.save(user);
+        } else {
+            existingUser = mapper.toUser(userDto, existingUser);
+            if (!userDto.getPassword().isEmpty()
+                    && !passwordEncoder.matches(userDto.getPassword(), existingUser.getPassword())) {
+                existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+            existingUser.setRoles(roleService.getRolesFromUserDto(userDto));
+            userRepository.save(existingUser);
         }
-        user.setRoles(roles);
-        userRepository.save(user);
     }
 
+    @Override
+    public Collection<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public List<UserDto> getUserDtos() {
+        return userRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -68,7 +95,7 @@ public class UserServiceImpl implements UserService {
         )).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
 }

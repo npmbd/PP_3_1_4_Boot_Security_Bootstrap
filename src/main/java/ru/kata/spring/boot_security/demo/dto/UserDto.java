@@ -1,17 +1,38 @@
 package ru.kata.spring.boot_security.demo.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class UserDto {
+    private long id;
     private String username = "john";
     private String firstName = "John";
     private String lastName = "Doe";
     private String email = "john@doe.com";
     private String phoneNumber = "123456789";
     private String password;
-    private Set<String> roles;
+    private Set<String> roles = new HashSet<>();
 
     public UserDto() {
+    }
+
+    public UserDto(long id, String username, String firstName, String lastName, String email, String phoneNumber, String password, Set<String> roles) {
+        this.id = id;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -46,6 +67,14 @@ public class UserDto {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Set<String> getRoles() {
         return roles;
     }
@@ -60,13 +89,5 @@ public class UserDto {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

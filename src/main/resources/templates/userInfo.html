@@ -5,7 +5,7 @@
     <title>User Info</title>
 </head>
 <body>
-<form action="#" th:action="@{/admin/save}" th:object="${user}" method="post">
+<form action="#" th:action="@{/admin/save}" th:object="${userDto}" method="post">
     <input type="hidden" th:field="*{id}">
     <input type="text" th:field="*{username}" placeholder="Username">
     <br><br>
@@ -20,10 +20,10 @@
     <input type="password" th:field="*{password}" placeholder="Password">
     <br><br>
     <label>Roles:</label><br>
-    <input type="checkbox" id="role_user" name="selectedRoles" th:checked="${roles.contains('ROLE_USER')}"
+    <input type="checkbox" id="role_user" name="roles" th:checked="*{roles.contains('ROLE_USER')}"
            value="ROLE_USER">
     <label for="role_user">User</label><br>
-    <input type="checkbox" id="role_admin" name="selectedRoles" th:checked="${roles.contains('ROLE_ADMIN')}"
+    <input type="checkbox" id="role_admin" name="roles" th:checked="*{roles.contains('ROLE_ADMIN')}"
            value="ROLE_ADMIN">
     <label for="role_admin">Admin</label><br>
     <br><br>

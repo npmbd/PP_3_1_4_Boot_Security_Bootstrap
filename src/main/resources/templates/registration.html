@@ -5,7 +5,7 @@
     <title>Registration</title>
 </head>
 <body>
-<form action="#" th:action="@{/registration}" th:object="${registrationDto}" method="post">
+<form action="#" th:action="@{/registration}" th:object="${userDto}" method="post">
     <label for="username"> Username </label>
     <input id="username" th:field="*{username}" autofocus="autofocus" required/>
     <br><br>
