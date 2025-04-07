@@ -1,25 +1,79 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>User</title>
 </head>
 <body>
-<div>
-    <p><strong>Id:</strong> <span th:text="${user.id}">Id пользователя</span></p>
-    <p><strong>Имя:</strong> <span th:text="${user.firstName}">Имя пользователя</span></p>
-    <p><strong>Фамилия:</strong> <span th:text="${user.lastName}">Имя пользователя</span></p>
-    <p><strong>Логин:</strong> <span th:text="${user.username}">Логин пользователя</span></p>
-    <p><strong>Почта:</strong> <span th:text="${user.email}">Почта пользователя</span></p>
-    <p><strong>Телефон:</strong> <span th:text="${user.phoneNumber}">Имя пользователя</span></p>
-    <p><strong>Роли:</strong>
-    <ul>
-        <li th:each="role : ${user.roles}" th:text="${role.name}">Роль</li>
-    </ul>
-    </p>
+<nav class="navbar navbar-dark bg-dark">
+    <div class="d-flex justify-content-start w-100">
+        <span class="navbar-text h5 font-weight-bold text-white" th:text="${currentUser.username}">Username</span>
+        <span class="navbar-text h5 text-white ml-3">with role(s):</span>
+        <span class="navbar-text h5 text-white ml-3" th:each="role : ${currentUser.roles}"
+              th:text="${role}">ROLE</span>
+        <form th:action="@{/logout}" method="post" class="ml-auto">
+            <button type="submit" class="btn btn-link navbar-text">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-2">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active ms-2" id="v-pills-user-tab" data-toggle="pill" href="#v-pills-user" role="tab"
+                   aria-controls="v-pills-user" aria-selected="true">User</a>
+            </div>
+        </div>
+
+        <div class="col-10">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-user" role="tabpanel"
+                     aria-labelledby="v-pills-user-tab">
+                    <h3>User information page</h3>
+                    <div class="border">
+                        <div class="border p-2 bg-light">
+                            <h5>Abut user</h5>
+                        </div>
+
+                        <div class="p-3">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">First name</th>
+                                    <th scope="col">Last name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone number</th>
+                                    <th scope="col">Role(s)</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:object="${currentUser}">
+                                    <td th:text="*{id}" scope="row"></td>
+                                    <td th:text="*{username}" scope="row"></td>
+                                    <td th:text="*{firstName}" scope="row"></td>
+                                    <td th:text="*{lastName}" scope="row"></td>
+                                    <td th:text="*{email}" scope="row"></td>
+                                    <td th:text="*{phoneNumber}" scope="row"></td>
+                                    <td scope="row">
+                                                <span th:each="role,iterStat : *{roles}"
+                                                      th:text="${role} + (${not iterStat.last} ? ', ' : '')">Role</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<br>
-<a href="/logout">
-    <button type="button">Logout</button>
-</a>
 </body>
 </html>

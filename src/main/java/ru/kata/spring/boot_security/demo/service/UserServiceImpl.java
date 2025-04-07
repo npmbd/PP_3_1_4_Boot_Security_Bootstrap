@@ -87,6 +87,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserDtoByUsername(String username) {
+        return userRepository.findByUsername(username).map(mapper::toDto).orElse(null);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).map(user -> new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

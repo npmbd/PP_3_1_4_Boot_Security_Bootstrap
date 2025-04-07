@@ -19,7 +19,7 @@ public class Mapper {
         String email = user.getEmail();
         String phoneNumber = user.getPhoneNumber();
         String password = user.getPassword();
-        Set<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        Set<String> roles = user.getRoles().stream().map(Role::toString).collect(Collectors.toSet());
         return new UserDto(id, username, firstName, lastName, email, phoneNumber, password, roles);
     }
 
