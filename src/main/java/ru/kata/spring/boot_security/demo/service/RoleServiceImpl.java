@@ -20,7 +20,6 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Set<Role> getRolesFromUserDto(UserDto userDto) {
         return userDto.getRoles().stream().map(this::getOrCreateRole).collect(Collectors.toSet());
-
     }
 
     @Override

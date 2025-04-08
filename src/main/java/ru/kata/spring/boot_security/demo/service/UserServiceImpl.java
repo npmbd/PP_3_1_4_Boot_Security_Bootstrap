@@ -1,8 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dto.Mapper;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
-import ru.kata.spring.boot_security.demo.entities.Role;
 import ru.kata.spring.boot_security.demo.entities.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
@@ -93,14 +90,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).map(user -> new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRoles())
-        )).orElseThrow(() -> new UsernameNotFoundException(username));
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+    @Override
+    public void createUsers() {
+
+        User user = new User();
+        user.setUsername("user");
+        user.setFirstName("user");
+        user.setLastName("user");
+        user.setEmail("user@user.com");
+        user.setPhoneNumber("123456789");
+        user.setPassword(passwordEncoder.encode("123"));
+        user.setRoles(Set.of(roleService.getOrCreateRole("ROLE_USER")));
+        userRepository.save(user);
+
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setFirstName("admin");
+        admin.setLastName("admin");
+        admin.setEmail("admin@admin.com");
+        admin.setPhoneNumber("123456789");
+        admin.setPassword(passwordEncoder.encode("123"));
+        admin.setRoles(Set.of(roleService.getOrCreateRole("ROLE_ADMIN")));
+        userRepository.save(admin);
+
+        User adminAndUser = new User();
+        adminAndUser.setUsername("admin-user");
+        adminAndUser.setFirstName("admin-user");
+        adminAndUser.setLastName("admin-user");
+        adminAndUser.setEmail("admin-user@admin.com");
+        adminAndUser.setPhoneNumber("123456789");
+        adminAndUser.setPassword(passwordEncoder.encode("123"));
+        adminAndUser.setRoles(Set.of(roleService.getOrCreateRole("ROLE_ADMIN"), roleService.getOrCreateRole("ROLE_USER")));
+        userRepository.save(adminAndUser);
     }
 }

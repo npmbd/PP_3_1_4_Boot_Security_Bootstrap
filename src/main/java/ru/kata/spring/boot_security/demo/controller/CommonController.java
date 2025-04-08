@@ -22,6 +22,12 @@ public class CommonController {
         return "login";
     }
 
+    @GetMapping("/createUsers")
+    public String createUsers() {
+        userService.createUsers();
+        return "/login";
+    }
+
     @GetMapping("/registration")
     public String showRegistrationForm(Model model) {
         UserDto userDto = new UserDto();

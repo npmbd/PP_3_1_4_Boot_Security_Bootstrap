@@ -23,4 +23,6 @@ public interface UserService extends UserDetailsService {
     List<UserDto> getUserDtos();
 
     UserDto getUserDtoByUsername(String username);
+
+    void createUsers();
 }

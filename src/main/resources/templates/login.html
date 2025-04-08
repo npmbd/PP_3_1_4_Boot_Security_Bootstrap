@@ -10,7 +10,7 @@
 </head>
 
 <body class="container">
-<div class="content bg-light row">
+<div class="content">
     <form class="login-form mx-auto py-5 w-25" method="post" th:action="@{/login}">
         <h3 class="pb-2 font-weight-bold">Please sign in</h3>
         <div>
@@ -28,6 +28,10 @@
             <button type="submit" class="btn btn-primary w-100">Sign in</button>
         </div>
     </form>
+    <div>
+        <p>Default users: admin, user, admin-user</p>
+        <p>Password: 123</p>
+    </div>
 </div>
 </body>
 </html>
